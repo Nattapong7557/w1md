@@ -2,10 +2,1231 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>Art Gallery Project</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Art Gallery - System Architecture Dashboard</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style System (Embedded) -->
+    <style>
+/* Google Fonts Imports */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+/* CSS Custom Properties (Theme Variables) */
+:root {
+    /* Dark Theme Variables (Default) */
+    --bg-primary: #0a0d16;
+    --bg-secondary: #111625;
+    --bg-glass: rgba(17, 22, 37, 0.7);
+    --border-glass: rgba(255, 255, 255, 0.08);
+    --border-glow: rgba(0, 242, 254, 0.15);
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent-blue: #00f2fe;
+    --accent-purple: #9d4edd;
+    --accent-purple-glow: rgba(157, 78, 221, 0.4);
+    --accent-emerald: #10b981;
+    --accent-gold: #f59e0b;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.6);
+    --glass-blur: 16px;
+    --transition-speed: 0.3s;
+    --transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Light Theme Variables */
+[data-theme="light"] {
+    --bg-primary: #f8fafc;
+    --bg-secondary: #ffffff;
+    --bg-glass: rgba(255, 255, 255, 0.8);
+    --border-glass: rgba(15, 23, 42, 0.08);
+    --border-glow: rgba(59, 130, 246, 0.15);
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --accent-blue: #3b82f6;
+    --accent-purple: #8b5cf6;
+    --accent-purple-glow: rgba(139, 92, 246, 0.2);
+    --accent-emerald: #10b981;
+    --accent-gold: #d97706;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* Reset and Core Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    overflow-x: hidden;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+/* Modern Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bg-secondary);
+    border-radius: 4px;
+    border: 1px solid var(--border-glass);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-blue);
+}
+
+/* Grid Layout for App */
+#app-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* Sidebar Styling (Obsidian Glassmorphism) */
+aside.sidebar {
+    width: 320px;
+    background: var(--bg-glass);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border-right: 1px solid var(--border-glass);
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    padding: 2rem 1.5rem;
+    transition: width var(--transition-speed), transform var(--transition-speed);
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2.5rem;
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.sidebar-logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.25rem;
+    box-shadow: 0 4px 15px var(--accent-purple-glow);
+}
+
+.sidebar-logo-text {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    background: linear-gradient(to right, var(--text-primary), var(--text-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Theme Toggle Button */
+.theme-toggle-btn {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-glass);
+    border-radius: 10px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all var(--transition-speed) var(--transition-bounce);
+}
+
+.theme-toggle-btn:hover {
+    color: var(--accent-blue);
+    border-color: var(--accent-blue);
+    transform: scale(1.05);
+    box-shadow: 0 0 10px var(--border-glow);
+}
+
+/* Sidebar Navigation & Table of Contents */
+.sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+}
+
+.toc-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.toc-list {
+    list-style: none;
+}
+
+.toc-item {
+    margin-bottom: 0.5rem;
+}
+
+.toc-link {
+    display: block;
+    padding: 0.6rem 0.8rem;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border-left: 2px solid transparent;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.toc-link:hover {
+    color: var(--accent-blue);
+    background: rgba(0, 242, 254, 0.04);
+    padding-left: 1.1rem;
+}
+
+.toc-item.active .toc-link {
+    color: var(--accent-blue);
+    background: rgba(0, 242, 254, 0.08);
+    border-left-color: var(--accent-blue);
+    font-weight: 600;
+    padding-left: 1.1rem;
+    box-shadow: inset 1px 0 0 rgba(255,255,255,0.05);
+}
+
+/* Indent sub-headers in TOC */
+.toc-item.level-2 {
+    margin-left: 0.75rem;
+}
+.toc-item.level-3 {
+    margin-left: 1.5rem;
+}
+
+.sidebar-footer {
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-glass);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.footer-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+/* Main Content Area */
+main.content-area {
+    flex: 1;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 3rem 4rem;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.content-wrapper {
+    width: 100%;
+    max-width: 900px;
+}
+
+/* Markdown Rendering Custom Styles */
+.markdown-body {
+    line-height: 1.7;
+    font-size: 1.05rem;
+}
+
+/* Titles */
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4 {
+    font-family: 'Outfit', sans-serif;
+    color: var(--text-primary);
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.markdown-body h1 {
+    font-size: 2.25rem;
+    border-bottom: 2px solid var(--border-glass);
+    padding-bottom: 0.75rem;
+    margin-top: 0;
+    background: linear-gradient(135deg, var(--text-primary) 30%, var(--accent-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.markdown-body h2 {
+    font-size: 1.6rem;
+    border-bottom: 1px solid var(--border-glass);
+    padding-bottom: 0.5rem;
+    position: relative;
+}
+
+.markdown-body h2::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(to right, var(--accent-blue), var(--accent-purple));
+    border-radius: 2px;
+}
+
+.markdown-body h3 {
+    font-size: 1.25rem;
+}
+
+/* Text elements */
+.markdown-body p {
+    margin-bottom: 1.2rem;
+    color: var(--text-secondary);
+}
+
+.markdown-body a {
+    color: var(--accent-blue);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+    border-bottom: 1px dashed var(--accent-blue);
+}
+
+.markdown-body a:hover {
+    opacity: 0.8;
+}
+
+.markdown-body strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* Lists */
+.markdown-body ul,
+.markdown-body ol {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+    color: var(--text-secondary);
+}
+
+.markdown-body li {
+    margin-bottom: 0.5rem;
+}
+
+/* Tables (Highly Stylized Glassmorphism) */
+.markdown-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    box-shadow: var(--shadow-md);
+}
+
+.markdown-body th {
+    background-color: rgba(0, 242, 254, 0.05);
+    color: var(--text-primary);
+    font-weight: 600;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-glass);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+}
+
+.markdown-body td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-glass);
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.markdown-body tr:last-child td {
+    border-bottom: none;
+}
+
+.markdown-body tr:hover td {
+    background-color: rgba(255, 255, 255, 0.02);
+    color: var(--text-primary);
+}
+
+/* Code & Pre */
+.markdown-body code {
+    font-family: 'Consolas', 'Monaco', 'Andale Mono', monospace;
+    font-size: 0.9rem;
+    background-color: rgba(0, 242, 254, 0.06);
+    color: var(--accent-blue);
+    padding: 0.2rem 0.4rem;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 242, 254, 0.1);
+}
+
+.markdown-body pre {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-glass);
+    padding: 1.25rem;
+    border-radius: 12px;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    box-shadow: var(--shadow-sm);
+}
+
+.markdown-body pre code {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    padding: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Divider */
+.markdown-body hr {
+    height: 1px;
+    background: var(--border-glass);
+    border: none;
+    margin: 3rem 0;
+}
+
+/* Blockquotes */
+.markdown-body blockquote {
+    border-left: 4px solid var(--accent-blue);
+    background: rgba(0, 242, 254, 0.02);
+    padding: 1rem 1.5rem;
+    margin: 1.5rem 0;
+    border-radius: 0 8px 8px 0;
+}
+
+.markdown-body blockquote p {
+    margin-bottom: 0;
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
+/* Mermaid Wrapper */
+.mermaid-diagram-container {
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 2rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.mermaid-diagram-container::before {
+    content: 'ARCHITECTURE DIAGRAM';
+    position: absolute;
+    top: 0.75rem;
+    left: 1rem;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+}
+
+.mermaid-diagram-container svg {
+    max-width: 100% !important;
+    height: auto !important;
+}
+
+/* Floating Actions */
+.floating-actions {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    z-index: 100;
+}
+
+.action-btn {
+    width: 48px;
+    height: 48px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-glass);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-secondary);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-speed) var(--transition-bounce);
+}
+
+.action-btn:hover {
+    color: var(--accent-blue);
+    border-color: var(--accent-blue);
+    transform: translateY(-4px);
+    box-shadow: 0 4px 15px var(--border-glow);
+}
+
+/* Mobile Toggle Hamburger Button */
+.mobile-nav-toggle {
+    display: none;
+    position: fixed;
+    top: 1.5rem;
+    left: 1.5rem;
+    z-index: 101;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+}
+
+/* Media Queries for Responsive Design */
+@media (max-width: 1024px) {
+    aside.sidebar {
+        position: fixed;
+        left: -320px;
+        top: 0;
+        bottom: 0;
+        box-shadow: var(--shadow-lg);
+    }
+    
+    aside.sidebar.open {
+        left: 0;
+    }
+    
+    .mobile-nav-toggle {
+        display: flex;
+    }
+    
+    main.content-area {
+        padding: 6rem 2rem 2rem 2rem;
+    }
+}
+
+@media (max-width: 640px) {
+    main.content-area {
+        padding: 5rem 1rem 1rem 1rem;
+    }
+    
+    .markdown-body h1 {
+        font-size: 1.75rem;
+    }
+    
+    .markdown-body h2 {
+        font-size: 1.35rem;
+    }
+    
+    .markdown-body table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+    </style>
+    <!-- Marked.js for parsing Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Mermaid.js for drawing diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 </head>
 <body>
-    <h1>ยินดีต้อนรับสู่โปรเจกต์ร้านขายรูปศิลปะ</h1>
-    <p>เว็บไซต์นี้กำลังอยู่ในขั้นตอนการพัฒนาในส่วนของ Analysis & Design</p>
+    <!-- Mobile Navigation Toggle Burger Button -->
+    <button id="mobile-nav-toggle" class="mobile-nav-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="app-container">
+        <!-- Sidebar Navigation (Obsidian Glassmorphism) -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="sidebar-logo-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <span class="sidebar-logo-text">Art Gallery SRS</span>
+                </div>
+                <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Dark/Light Mode">
+                    <i class="fas fa-sun"></i>
+                </button>
+            </div>
+
+            <!-- Table of Contents Section -->
+            <nav class="sidebar-nav">
+                <h4 class="toc-title">สารบัญเอกสาร</h4>
+                <ul id="toc-list" class="toc-list">
+                    <!-- Automatically populated by app.js -->
+                    <li style="padding: 1rem; text-align: center; color: var(--text-muted);">
+                        <i class="fas fa-spinner fa-spin"></i> กำลังโหลดสารบัญ...
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="footer-meta">
+                    <p>CSI204: Workshop #1</p>
+                    <p style="margin-top: 0.25rem;">ระบบร้านขายรูปภาพศิลปะ</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Panel -->
+        <main class="content-area">
+            <div class="content-wrapper">
+                <article id="markdown-content" class="markdown-body">
+                    <!-- Automatically populated by app.js -->
+                    <div style="text-align: center; padding: 4rem 0; color: var(--text-secondary);">
+                        <i class="fas fa-spinner fa-spin fa-2x"></i>
+                        <p style="margin-top: 1rem; font-family: 'Outfit', sans-serif;">กำลังประมวลผลข้อกำหนดความต้องการระบบ...</p>
+                    </div>
+                </article>
+            </div>
+        </main>
+    </div>
+
+    <!-- Floating Actions Panel -->
+    <div class="floating-actions">
+        <button id="scroll-top-btn" class="action-btn" title="เลื่อนกลับไปด้านบน" style="opacity: 0; pointer-events: none;">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+    </div>
+
+    <!-- Embedded Backup Markdown for offline file:/// CORS compatibility -->
+    <script type="text/markdown" id="srs-fallback-markdown">
+# เอกสารข้อกำหนดความต้องการทางซอฟต์แวร์ (Software Requirements Specification - SRS)
+## โปรเจกต์: ระบบร้านขายรูปภาพศิลปะออนไลน์ (Art Gallery Platform)
+
+---
+
+## 1. ภาพรวมระบบ (System Overview)
+ระบบร้านขายรูปภาพศิลปะออนไลน์ (Art Gallery Platform) เป็นแพลตฟอร์มที่เชื่อมต่อระหว่าง **ศิลปิน (Artists)** ผู้สร้างสรรค์ผลงาน และ **ลูกค้า (Customers)** ผู้ต้องการสั่งซื้อรูปภาพในรูปแบบดิจิทัลและการพิมพ์ (Print on Demand)
+
+ระบบนี้รองรับการแสดงผลงานแบบ Mobile-First โดยทำงานอยู่บนระบบ Frontend ด้วย React / Next.js ที่ทำ Server-Side Rendering (SSR) และมี Backend เป็น Node.js/Express สำหรับจัดการส่วนของ Business Logic พร้อมทั้งใช้ AWS S3 สำหรับจัดเก็บไฟล์ต้นฉบับคุณภาพสูง (High-Resolution) และจัดทำไฟล์ลายน้ำ (Watermarked Previews) เพื่อป้องกันการละเมิดลิขสิทธิ์
+
+---
+
+## 2. ความต้องการทางระบบ (System Requirements)
+
+### 2.1 ความต้องการเชิงฟังก์ชัน (Functional Requirements)
+
+#### ก. ฝั่งลูกค้า (Customer Portal)
+- **การเลือกดูผลงาน (Browse Artwork):** ค้นหาและคัดกรองรูปภาพตามหมวดหมู่ ชื่อศิลปิน สไตล์ แท็ก สีหลัก หรือช่วงราคา
+- **โปรไฟล์ศิลปิน (Artist Profile):** เข้าดูผลงานทั้งหมด ประวัติ (Bio) และช่องทางการติดต่อของศิลปิน
+- **รายละเอียดผลงาน (Artwork Detail):** ดูรายละเอียดรูปภาพ ซูมภาพตัวอย่าง (Watermarked) เลือกขนาดพิมพ์ (Print Size) และประเภทกรอบรูป (Framing Option)
+- **ตะกร้าสินค้าและการชำระเงิน (Cart & Checkout):** บันทึกรายการที่ต้องการซื้อ คำนวณราคาค่าพิมพ์ กรอบรูป และค่าจัดส่ง
+- **การจัดการสมาชิก (Auth):** สมัครสมาชิก เข้าสู่ระบบด้วย JWT หรือ OAuth2 (Google) รวมถึงบันทึกรายการโปรด (Wishlist) และดูประวัติการสั่งซื้อ (Order History)
+
+#### ข. ฝั่งศิลปินและผู้ดูแลระบบ (Artist / Admin Dashboard)
+- **การอัปโหลดผลงาน (Upload Artwork):** ศิลปินสามารถอัปโหลดไฟล์ภาพความละเอียดสูง (High-res) โดยระบบจะส่งไปประมวลผลเพิ่มลายน้ำโดยอัตโนมัติบน AWS S3
+- **การจัดการผลงาน (Manage Portfolio):** แก้ไขข้อมูลภาพ ตั้งราคาขายดิจิทัลและราคาเริ่มต้นงานพิมพ์
+- **การจัดการคำสั่งซื้อ (Order Fulfillment):** ติดตามสถานะการพิมพ์ การเข้ากรอบรูป และการจัดส่งสินค้าให้กับลูกค้า
+- **รายงานสรุปยอดขาย (Sales Dashboard):** สรุปรายได้ สถิติยอดขายผลงานแต่ละชิ้น และจำนวนยอดเข้าชม
+
+---
+
+### 2.2 ความต้องการที่ไม่ได้ทำเชิงฟังก์ชัน (Non-Functional Requirements)
+- **ความปลอดภัย (Security):**
+  - ใช้ HTTPS ตลอดทั้งระบบ
+  - จัดการสิทธิ์การใช้งาน API ด้วย JWT (JSON Web Token) และควบคุม Rate Limiting เพื่อป้องกันการโจมตีแบบ DDoS
+  - ปกป้องรูปภาพลิขสิทธิ์ต้นฉบับบน AWS S3 ด้วย Pre-signed URLs ที่หมดอายุได้ และเผยแพร่เฉพาะรูปภาพที่มีลายน้ำ (Watermark) ต่อสาธารณะ
+- **ความสามารถในการปรับขยาย (Scalability):**
+  - จัดเก็บ Session และแคชผลงานยอดนิยมด้วย Redis เพื่อลด Load การทำงานของ MySQL Database
+  - ใช้ NoSQL (MongoDB) สำหรับเก็บข้อมูลการรีวิว (Reviews) และแท็ก (Tags) ที่มีโครงสร้างยืดหยุ่นและต้องการความรวดเร็วในการค้นหา
+- **ความน่าเชื่อถือและความพร้อมใช้งาน (Reliability & Availability):**
+  - ระบบทำ Containerization ด้วย Docker เพื่อให้ย้ายและขยายขนาดของแอปพลิเคชันได้ง่าย
+  - ติดตั้งผ่าน GitHub Actions และรันในสภาพแวดล้อมระบบคลาวด์ (AWS EC2 / Elastic Beanstalk)
+
+---
+
+## 3. การออกแบบระบบฐานข้อมูล (Database Design)
+
+```mermaid
+erDiagram
+    USERS ||--o{ ORDERS : places
+    ARTISTS ||--o{ ARTWORKS : creates
+    ARTWORKS ||--o{ ORDERS : included_in
+    ORDERS ||--|| PAYMENTS : has
+    
+    USERS {
+        int id PK
+        string name
+        string email UK
+        string password_hash
+        string role
+        datetime created_at
+    }
+
+    ARTISTS {
+        int id PK
+        int user_id FK
+        string bio
+        string portfolio_url
+        string custom_branding
+    }
+
+    ARTWORKS {
+        int id PK
+        int artist_id FK
+        string title
+        text description
+        string high_res_url
+        string preview_url
+        decimal price_digital
+        datetime created_at
+    }
+
+    ORDERS {
+        int id PK
+        int user_id FK
+        datetime order_date
+        string status
+        decimal total_amount
+        string shipping_address
+    }
+
+    PAYMENTS {
+        int id PK
+        int order_id FK
+        string payment_method
+        string transaction_id
+        decimal amount
+        string status
+        datetime payment_date
+    }
+```
+
+### 3.1 Relational Database Schema (MySQL)
+ฐานข้อมูลหลักเก็บข้อมูลที่มีความสัมพันธ์กันสูงและต้องการความถูกต้องของธุรกรรม (ACID Transactions) เช่น ข้อมูลผู้ใช้, ข้อมูลทางการเงิน และยอดการสั่งซื้อ
+
+#### ตาราง `users`
+| Field | Type | Attributes | Description |
+|---|---|---|---|
+| `id` | INT | PRIMARY KEY, AUTO_INCREMENT | รหัสผู้ใช้งาน |
+| `name` | VARCHAR(100) | NOT NULL | ชื่อ-นามสกุล |
+| `email` | VARCHAR(100) | UNIQUE, NOT NULL | อีเมล (ใช้สำหรับ Login) |
+| `password_hash` | VARCHAR(255) | NOT NULL | รหัสผ่านที่แฮชแล้ว |
+| `role` | ENUM('customer', 'artist', 'admin') | DEFAULT 'customer' | บทบาทของผู้ใช้ |
+| `created_at` | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP | วันที่สร้างบัญชี |
+
+#### ตาราง `artworks`
+| Field | Type | Attributes | Description |
+|---|---|---|---|
+| `id` | INT | PRIMARY KEY, AUTO_INCREMENT | รหัสผลงานศิลปะ |
+| `artist_id` | INT | FOREIGN KEY (references `artists.id`) | รหัสศิลปินผู้สร้างสรรค์ |
+| `title` | VARCHAR(200) | NOT NULL | ชื่อของผลงาน |
+| `description` | TEXT | | รายละเอียดคำอธิบายภาพ |
+| `high_res_url` | VARCHAR(500) | NOT NULL | ลิงก์ไฟล์ต้นฉบับบน AWS S3 (Private) |
+| `preview_url` | VARCHAR(500) | NOT NULL | ลิงก์ไฟล์ตัวอย่างที่มีลายน้ำ (Public) |
+| `price_digital` | DECIMAL(10, 2) | NOT NULL | ราคาสำหรับดาวน์โหลดไฟล์ดิจิทัล |
+| `created_at` | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP | วันที่อัปโหลดรูปภาพ |
+
+---
+
+### 3.2 NoSQL Database (MongoDB)
+เก็บข้อมูลส่วนที่ไม่เป็นโครงสร้างคงที่ เช่น การรีวิวผลงาน (Reviews) และแท็ก (Tags) เพื่อการสืบค้นที่รวดเร็ว
+
+#### Collection `reviews`
+```json
+{
+  "_id": "ObjectId('60d5ec49f3e9641774b2f211')",
+  "artwork_id": 105,
+  "user": {
+    "user_id": 42,
+    "name": "Somchai Jaidee"
+  },
+  "rating": 5,
+  "comment": "พิมพ์ลงบนผ้าใบแคนวาสออกมาได้สวยงามและคมชัดมากครับ คุ้มค่าราคามาก",
+  "created_at": "2026-06-26T15:30:00Z"
+}
+```
+
+---
+
+### 3.3 Cache Store (Redis)
+ใช้เก็บข้อมูลประเภท Session และเก็บ Cache ผลงานยอดนิยมชั่วคราวเพื่อเร่งความเร็วในการโหลดหน้าเว็บหลัก
+
+- **Key:** `session:<user_id>`
+  - **Type:** String (JSON)
+  - **Value:** ข้อมูลเซสชันการเข้าสู่ระบบและโทเค็นของระบบ
+- **Key:** `artwork:detail:<artwork_id>`
+  - **Type:** String (JSON)
+  - **Value:** แคชรายละเอียดผลงานเพื่อลดการคิวรี่ MySQL ซ้ำๆ
+
+---
+
+## 4. ข้อกำหนด API (API Specifications)
+
+### 4.1 สมาชิก - สมัครสมาชิกใหม่ (User Registration)
+ลงทะเบียนผู้ใช้งานระบบคนใหม่เข้าสู่ระบบ
+
+- **Endpoint:** `POST /api/v1/auth/register`
+- **Request Body (JSON):**
+```json
+{
+  "name": "Nattapong Dev",
+  "email": "nattapong@example.com",
+  "password": "SecurePassword123",
+  "role": "customer"
+}
+```
+- **Response Success (201 Created):**
+```json
+{
+  "status": "success",
+  "message": "User registered successfully",
+  "data": {
+    "user_id": 75,
+    "name": "Nattapong Dev",
+    "email": "nattapong@example.com",
+    "role": "customer",
+    "created_at": "2026-06-26T16:04:00Z"
+  }
+}
+```
+
+### 4.2 ผลงาน - ดึงรายละเอียดผลงานศิลปะ (Get Artwork Details)
+ดึงรายละเอียดของรูปภาพศิลปะพร้อมข้อมูลศิลปินผู้สร้าง
+
+- **Endpoint:** `GET /api/v1/artworks/:id`
+- **Response Success (200 OK):**
+```json
+{
+  "status": "success",
+  "data": {
+    "id": 105,
+    "title": "สุนทรียภาพแห่งขุนเขา",
+    "description": "ภาพวาดสีน้ำมันทิวทัศน์เทือกเขาที่สะท้อนแสงอาทิตย์ยามเย็น",
+    "preview_url": "https://s3.ap-southeast-1.amazonaws.com/art-gallery/previews/mountain-watermark.jpg",
+    "price_digital": 1200.00,
+    "artist": {
+      "artist_id": 8,
+      "name": "Chalermchai M.",
+      "portfolio_url": "https://artgallery.com/artists/chalermchai"
+    },
+    "tags": ["painting", "nature", "oil-color"]
+  }
+}
+```
+
+### 4.3 ชำระเงิน - สร้างรายการสั่งซื้อและการชำระเงิน (Create Order & Checkout)
+ส่งข้อมูลชำระเงินผ่าน Gateway (เช่น Stripe หรือ PromptPay)
+
+- **Endpoint:** `POST /api/v1/payments/checkout`
+- **Headers:** `Authorization: Bearer <JWT_TOKEN>`
+- **Request Body (JSON):**
+```json
+{
+  "order_items": [
+    {
+      "artwork_id": 105,
+      "type": "print",
+      "print_size": "A2",
+      "frame_option": "wood_black",
+      "quantity": 1
+    }
+  ],
+  "shipping_address": "123/45 ถนนพหลโยธิน แขวงจตุจักร เขตจตุจักร กรุงเทพฯ 10900",
+  "payment_method": "PromptPay"
+}
+```
+- **Response Success (200 OK):**
+```json
+{
+  "status": "success",
+  "message": "Checkout initiated successfully",
+  "data": {
+    "order_id": 2045,
+    "total_amount": 2450.00,
+    "payment_url": "https://gateway.stripe.com/pay/cs_test_a1b2c3d4...",
+    "qr_code_payload": "0002010102123000160000000000000000...",
+    "expires_at": "2026-06-26T16:20:00Z"
+  }
+}
+```
+
+---
+
+## 5. แผนภาพสถาปัตยกรรมระบบ (System Architecture Diagram)
+
+สถาปัตยกรรมระบบแบ่งออกเป็น 3 ชั้นหลัก (Frontend, Backend, Database) ดังแสดงในแผนภาพด้านล่าง:
+
+```mermaid
+graph TD
+    %% Styling Definitions
+    classDef frontend fill:#3f37c9,stroke:#333,stroke-width:2px,color:#fff;
+    classDef backend fill:#065a43,stroke:#333,stroke-width:2px,color:#fff;
+    classDef database fill:#9a5200,stroke:#333,stroke-width:2px,color:#fff;
+    classDef subBlock fill:#ffffff,stroke:#666,stroke-width:1px,color:#000;
+    classDef storage fill:#1b4332,stroke:#fff,stroke-dasharray: 5 5,color:#fff;
+
+    %% --- Frontend Layer ---
+    subgraph Frontend_Layer ["Frontend Layer — ร้านขายรูปศิลปะ (React / Next.js · SSR · Mobile-first)"]
+        direction LR
+        F1[Art gallery<br/>Browse artwork] ::: subBlock
+        F2[Artist profile<br/>Portfolio · bio] ::: subBlock
+        F3[Artwork detail<br/>Zoom · size · price] ::: subBlock
+        F4[Cart / checkout<br/>Print size · framing] ::: subBlock
+        F5[Artist panel<br/>Upload · manage] ::: subBlock
+        Auth["สมัครสมาชิก / Login<br/>JWT · OAuth2 (Google)<br/>บันทึก Wishlist & ประวัติการสั่งซื้อ"] ::: subBlock
+    end
+    style Frontend_Layer fill:#3b3395,stroke:#fff,stroke-width:2px,color:#fff
+
+    %% --- Backend Layer ---
+    subgraph Backend_Layer ["Backend Layer — Business Logic (Node.js / Express · Docker · GitHub Actions · AWS)"]
+        direction TB
+        B1[API Gateway<br/>Auth · rate limit] ::: subBlock
+        B2[Artwork service<br/>Upload · metadata] ::: subBlock
+        B3[Order service<br/>Print size · shipping] ::: subBlock
+        B4[Payment service<br/>Stripe · PromptPay] ::: subBlock
+        
+        S3["Cloud storage: AWS S3<br/>เก็บไฟล์ต้นฉบับ (high-res) + ไฟล์ Watermark สำหรับ Preview"] ::: storage
+    end
+    style Backend_Layer fill:#0b5345,stroke:#fff,stroke-width:2px,color:#fff
+
+    %% --- Database Layer ---
+    subgraph Database_Layer ["Database Layer — จัดเก็บข้อมูล (Relational + NoSQL + Cache)"]
+        direction LR
+        subgraph MySQL_DB ["Relational DB — MySQL"]
+            DB1["Users · Artists · Artworks<br/>Orders · Payments · Categories<br/>ข้อมูลธุรกรรม ต้องการความถูกต้องสูง"] ::: subBlock
+        end
+        style MySQL_DB fill:#7e5109,stroke:#fff,color:#fff
+        
+        subgraph NoSQL_Redis ["NoSQL + Redis"]
+            DB2["MongoDB — Reviews · Tags · Search index<br/>Redis — Session · Artwork cache<br/>เพิ่มความเร็ว ลด load บน MySQL"] ::: subBlock
+        end
+        style NoSQL_Redis fill:#7e5109,stroke:#fff,color:#fff
+    end
+    style Database_Layer fill:#784212,stroke:#fff,stroke-width:2px,color:#fff
+
+    %% --- Connections (Data Flow) ---
+    Frontend_Layer -->|REST API| B1
+    B1 --> B2
+    B1 --> B2
+    B1 --> B3
+    B1 --> B4
+    
+    B2 <--> S3
+    
+    B2 -->|Query| Database_Layer
+    B3 -->|Query| Database_Layer
+    B4 -->|Query| Database_Layer
+```
+    </script>
+
+    <!-- Application Script (Embedded) -->
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const markdownContainer = document.getElementById('markdown-content');
+    const tocList = document.getElementById('toc-list');
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const mobileNavToggle = document.getElementById('mobile-nav-toggle');
+    const sidebar = document.querySelector('aside.sidebar');
+    const contentArea = document.querySelector('main.content-area');
+    const scrollTopBtn = document.getElementById('scroll-top-btn');
+
+    let currentTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    updateThemeIcon();
+
+    // Initialize Mermaid Configuration
+    initMermaid(currentTheme);
+
+    // Fetch and Render Markdown Documentation
+    fetchDocumentation();
+
+    // Event Listeners
+    themeToggleBtn.addEventListener('click', toggleTheme);
+    if (mobileNavToggle) {
+        mobileNavToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            const isOpen = sidebar.classList.contains('open');
+            mobileNavToggle.innerHTML = isOpen ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+    }
+
+    // Scroll Top Button Handler
+    if (scrollTopBtn) {
+        scrollTopBtn.addEventListener('click', () => {
+            contentArea.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        
+        contentArea.addEventListener('scroll', () => {
+            if (contentArea.scrollTop > 300) {
+                scrollTopBtn.style.opacity = '1';
+                scrollTopBtn.style.pointerEvents = 'all';
+            } else {
+                scrollTopBtn.style.opacity = '0';
+                scrollTopBtn.style.pointerEvents = 'none';
+            }
+        });
+    }
+
+    // Functions
+    function initMermaid(theme) {
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: theme === 'dark' ? 'dark' : 'default',
+            securityLevel: 'loose',
+            flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'cardinal' },
+            gantt: { useWidth: 1200 },
+            themeVariables: theme === 'dark' ? {
+                background: 'transparent',
+                primaryColor: '#111625',
+                primaryTextColor: '#f1f5f9',
+                lineColor: '#64748b',
+                secondaryColor: '#1b253b',
+                tertiaryColor: '#2d1b4e'
+            } : {
+                background: 'transparent',
+                primaryColor: '#ffffff',
+                primaryTextColor: '#0f172a',
+                lineColor: '#94a3b8',
+                secondaryColor: '#f8fafc',
+                tertiaryColor: '#f1f5f9'
+            }
+        });
+    }
+
+    async function fetchDocumentation() {
+        try {
+            // Try fetching dynamically (works on local servers / hosting)
+            const response = await fetch('srs.md');
+            if (!response.ok) {
+                throw new Error(`Failed to load srs.md (Status: ${response.status})`);
+            }
+            const markdownText = await response.text();
+            renderMarkdown(markdownText);
+        } catch (error) {
+            console.warn('Dynamic fetch failed (possibly local file protocol CORS). Using embedded fallback markdown...', error);
+            const fallbackElement = document.getElementById('srs-fallback-markdown');
+            if (fallbackElement) {
+                renderMarkdown(fallbackElement.textContent);
+            } else {
+                console.error('Error fetching documentation:', error);
+                markdownContainer.innerHTML = `
+                    <div style="padding: 2rem; border-radius: 12px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444;">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Error Loading Documentation</h3>
+                        <p>${error.message}</p>
+                        <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
+                            Please verify that <strong>srs.md</strong> exists or that the embedded backup is loaded correctly.
+                        </p>
+                    </div>
+                `;
+            }
+        }
+    }
+
+    function renderMarkdown(text) {
+        // Configure marked options
+        marked.setOptions({
+            gfm: true,
+            breaks: true,
+            headerIds: false // We will handle IDs manually to ensure clean routing
+        });
+
+        // Parse markdown text to HTML
+        const htmlContent = marked.parse(text);
+        markdownContainer.innerHTML = htmlContent;
+
+        // Custom post-processing for Mermaid block renderings
+        processMermaidBlocks();
+
+        // Build Table of Contents & setup headers
+        buildTableOfContents();
+
+        // Initialize and render all Mermaid diagrams on screen
+        try {
+            mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+        } catch (e) {
+            console.error('Mermaid render error:', e);
+        }
+
+        // Setup Scroll Spy
+        setupScrollSpy();
+    }
+
+    function processMermaidBlocks() {
+        // Look for pre code elements that are tagged as language-mermaid
+        const codeElements = markdownContainer.querySelectorAll('pre code.language-mermaid');
+        codeElements.forEach(codeElement => {
+            const preElement = codeElement.parentElement;
+            const mermaidCode = codeElement.textContent.trim();
+            
+            // Create container for mermaid rendering
+            const containerDiv = document.createElement('div');
+            containerDiv.className = 'mermaid-diagram-container';
+            
+            const mermaidDiv = document.createElement('div');
+            mermaidDiv.className = 'mermaid';
+            mermaidDiv.textContent = mermaidCode;
+            
+            containerDiv.appendChild(mermaidDiv);
+            preElement.parentNode.replaceChild(containerDiv, preElement);
+        });
+    }
+
+    function buildTableOfContents() {
+        tocList.innerHTML = ''; // Clear original TOC list
+        const headers = markdownContainer.querySelectorAll('h1, h2, h3');
+        
+        headers.forEach((header, index) => {
+            // Generate clean URL slug ID from header text
+            const headerText = header.textContent.trim();
+            const headerId = 'section-' + index + '-' + headerText
+                .toLowerCase()
+                .replace(/[^\w\u0e00-\u0e7f\-]+/g, '-') // Allow Thai characters and standard alphanumeric/hyphens
+                .replace(/^-+|-+$/g, '');
+            
+            header.setAttribute('id', headerId);
+
+            // Create TOC list item
+            const level = parseInt(header.tagName.substring(1));
+            const listItem = document.createElement('li');
+            listItem.className = `toc-item level-${level}`;
+            
+            const anchor = document.createElement('a');
+            anchor.href = `#${headerId}`;
+            anchor.className = 'toc-link';
+            anchor.textContent = headerText;
+            
+            // Click listener for smooth navigation and closing mobile sidebar
+            anchor.addEventListener('click', (e) => {
+                e.preventDefault();
+                header.scrollIntoView({ behavior: 'smooth' });
+                
+                // Active TOC item styling update immediately
+                document.querySelectorAll('.toc-item').forEach(item => item.classList.remove('active'));
+                listItem.classList.add('active');
+
+                // Close mobile sidebar if open
+                if (sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    if (mobileNavToggle) {
+                        mobileNavToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                    }
+                }
+            });
+
+            listItem.appendChild(anchor);
+            tocList.appendChild(listItem);
+        });
+    }
+
+    function setupScrollSpy() {
+        const headers = Array.from(markdownContainer.querySelectorAll('h1, h2, h3'));
+        const tocItems = Array.from(tocList.querySelectorAll('.toc-item'));
+
+        if (headers.length === 0) return;
+
+        function updateActiveHeader() {
+            const scrollContainerTop = contentArea.getBoundingClientRect().top;
+            let activeIndex = 0;
+
+            // Find current header in view
+            for (let i = 0; i < headers.length; i++) {
+                const headerRect = headers[i].getBoundingClientRect();
+                // If header is above the center of viewport, select it
+                if (headerRect.top - scrollContainerTop <= 120) {
+                    activeIndex = i;
+                } else {
+                    break;
+                }
+            }
+
+            // Remove active classes
+            tocItems.forEach(item => item.classList.remove('active'));
+            
+            // Add active class to current header's TOC item
+            if (tocItems[activeIndex]) {
+                tocItems[activeIndex].classList.add('active');
+                
+                // Auto scroll TOC to keep the active item visible
+                const activeItem = tocItems[activeIndex];
+                const navContainer = tocList.parentElement;
+                const activeRect = activeItem.getBoundingClientRect();
+                const containerRect = navContainer.getBoundingClientRect();
+
+                if (activeRect.top < containerRect.top) {
+                    navContainer.scrollTop -= (containerRect.top - activeRect.top + 10);
+                } else if (activeRect.bottom > containerRect.bottom) {
+                    navContainer.scrollTop += (activeRect.bottom - containerRect.bottom + 10);
+                }
+            }
+        }
+
+        // Run once initially and bind scroll listener
+        updateActiveHeader();
+        contentArea.addEventListener('scroll', updateActiveHeader);
+    }
+
+    function toggleTheme() {
+        currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        localStorage.setItem('theme', currentTheme);
+        updateThemeIcon();
+        
+        // Re-initialize mermaid and reload document to render diagrams correctly in new theme colors
+        initMermaid(currentTheme);
+        fetchDocumentation();
+    }
+
+    function updateThemeIcon() {
+        themeToggleBtn.innerHTML = currentTheme === 'dark' 
+            ? '<i class="fas fa-sun"></i>' 
+            : '<i class="fas fa-moon"></i>';
+    }
+});
+</script>
 </body>
 </html>
