@@ -80,23 +80,41 @@
 ## 3. Use Case Diagram
 
 ```mermaid
-graph LR
+flowchart LR
+    %% Actors
     Customer(("👤 Customer"))
     Artist(("🎨 Artist"))
     Admin(("🔧 Admin"))
 
-    UC1["ค้นหาและเลือกดูผลงาน"]
-    UC2["สมัครสมาชิก / เข้าสู่ระบบ"]
-    UC3["เพิ่มสินค้าลงตะกร้า"]
-    UC4["ชำระเงินสั่งซื้อ"]
-    UC5["บันทึก Wishlist"]
-    UC6["ดูประวัติคำสั่งซื้อ"]
-    UC7["อัปโหลดผลงาน"]
-    UC8["จัดการ Portfolio"]
-    UC9["ดูรายงานยอดขาย"]
-    UC10["จัดการผู้ใช้งาน"]
-    UC11["ตรวจสอบเนื้อหา"]
+    %% System Boundary
+    subgraph System ["ระบบร้านขายรูปภาพศิลปะ (Art Gallery System)"]
+        %% Customer Use Cases
+        subgraph Customer_Actions ["การใช้งานทั่วไป & การซื้อรูปภาพ"]
+            UC1(["ค้นหาและเลือกดูผลงาน"])
+            UC3(["เพิ่มสินค้าลงตะกร้า"])
+            UC4(["ชำระเงินสั่งซื้อ"])
+            UC5(["บันทึก Wishlist"])
+            UC6(["ดูประวัติคำสั่งซื้อ"])
+        end
 
+        %% Shared Use Cases
+        UC2(["สมัครสมาชิก / เข้าสู่ระบบ"])
+
+        %% Artist Use Cases
+        subgraph Artist_Actions ["ระบบสำหรับศิลปิน"]
+            UC7(["อัปโหลดผลงาน"])
+            UC8(["จัดการ Portfolio"])
+            UC9(["ดูรายงานยอดขาย"])
+        end
+
+        %% Admin Use Cases
+        subgraph Admin_Actions ["ระบบผู้ดูแลระบบ"]
+            UC10(["จัดการผู้ใช้งาน"])
+            UC11(["ตรวจสอบเนื้อหา"])
+        end
+    end
+
+    %% Customer Connections
     Customer --> UC1
     Customer --> UC2
     Customer --> UC3
@@ -104,13 +122,31 @@ graph LR
     Customer --> UC5
     Customer --> UC6
 
+    %% Artist Connections
     Artist --> UC2
     Artist --> UC7
     Artist --> UC8
     Artist --> UC9
 
+    %% Admin Connections
     Admin --> UC10
     Admin --> UC11
+
+    %% Styling Config
+    classDef actor style fill:#0f172a,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef ucCommon style fill:#1e1b4b,stroke:#a855f7,stroke-width:2px,color:#f8fafc;
+    classDef ucArtist style fill:#064e3b,stroke:#34d399,stroke-width:2px,color:#f8fafc;
+    classDef ucAdmin style fill:#451a03,stroke:#fb923c,stroke-width:2px,color:#f8fafc;
+
+    class Customer,Artist,Admin actor;
+    class UC1,UC2,UC3,UC4,UC5,UC6 ucCommon;
+    class UC7,UC8,UC9 ucArtist;
+    class UC10,UC11 ucAdmin;
+
+    style System fill:#111827,stroke:#374151,stroke-width:2px,color:#9ca3af;
+    style Customer_Actions fill:#1e293b,stroke:#475569,stroke-dasharray: 5 5;
+    style Artist_Actions fill:#0f2d1e,stroke:#1e3a2e,stroke-dasharray: 5 5;
+    style Admin_Actions fill:#301e14,stroke:#452818,stroke-dasharray: 5 5;
 ```
 
 ---
